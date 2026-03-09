@@ -3,8 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <title>Campus-Flow</title>
-    <style>
-        
-    </style>
+<style>
+    .caption-text {
+        font-size: 1rem;
+        text-align: center;
+        /* display: flex;
+        align-items: center; */
+        caption-side: bottom;
+        /* padding: 10px; */
+        font-weight: bold;
+    }
+    table {
+        border-collapse: collapse;
+        border: 2px solid rgb(140 140 140);
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+    }
+    tbody {
+        background-color: rgb(202, 247, 255);
+        /* background-color: rgb(186, 231, 255); */
+        /* background-color: rgb(175, 243, 255); */
+    }
+    .td-weekend {
+        background-color: rgb(249, 255, 131);
+        /* background-color: rgb(175, 243, 255); */
+    }
+    th,
+    td {
+        border: 1px solid rgb(160 160 160);
+        /* padding: 8px 10px; */
+    }
+</style>
 </head>
+<body>
+    <table>
+        <caption class="caption-text">
+            学校時間割
+        </caption>
+        <thead>
+            <tr>
+                <th scope="col">時限</th>
+                <th scope="col">月</th>
+                <th scope="col">火</th>
+                <th scope="col">水</th>
+                <th scope="col">木</th>
+                <th scope="col">金</th>
+                <th scope="col">土</th>
+                <th scope="col">日</th>
+            </tr>
+        </thead>
+        <tbody id="timetable-body">
+        </tbody>
+    </table>
+    <script>
+        const schedule = document.getElementById("timetable-body");
+        const day = ["mon", "tue", "wed", "thu", "fri", "stu", "sun"]
+        for (let y = 1; y <= 6; y++) { // 何限目？
+            let content = `<tr><th>${y}</th>`;
+            for (let x = 1; x <= 7; x++) { // 何曜日？
+                content += `<td class="${(x == 6 || x == 7) ? "td-weekend" : ""}"><input type="text" id="${day[x-1]}-${y}">${day[x-1]}-${y}</td>`;
+            }
+            content += `</tr>`
+            schedule.innerHTML += content;
+        }
+    </script>
+</body>
 </html>
