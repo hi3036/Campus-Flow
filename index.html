@@ -5,18 +5,18 @@
     <title>Campus-Flow</title>
 <style>
     .caption-text {
-        font-size: 1rem;
+        font-size: 2rem;
         text-align: center;
         /* display: flex;
         align-items: center; */
-        caption-side: bottom;
+        caption-side: top;
         /* padding: 10px; */
         font-weight: bold;
     }
     table {
         border-collapse: collapse;
         border: 2px solid rgb(140 140 140);
-        font-size: 0.8rem;
+        font-size: 1rem;
         letter-spacing: 1px;
     }
     tbody {
@@ -30,42 +30,96 @@
     }
     th,
     td {
-        border: 1px solid rgb(160 160 160);
+        border: 1.5px solid rgb(160 160 160);
         /* padding: 8px 10px; */
+    }
+    th {
+        font-size: 1.5rem;
+    }
+    #save-btn {
+        display: block;
+        margin: 50px auto;
+        width: 150px;   /* 横幅 */
+        height: 60px;   /* 高さ */
+        border-radius: 8px;
+        background-color: rgb(203, 165, 228);
+        font-size: 0.8rem;
+    }
+    .center-box {
+        display: flex;
+        justify-content: center; /* 横の真ん中 */
     }
 </style>
 </head>
 <body>
-    <table>
-        <caption class="caption-text">
-            学校時間割
-        </caption>
-        <thead>
-            <tr>
-                <th scope="col">時限</th>
-                <th scope="col">月</th>
-                <th scope="col">火</th>
-                <th scope="col">水</th>
-                <th scope="col">木</th>
-                <th scope="col">金</th>
-                <th scope="col">土</th>
-                <th scope="col">日</th>
-            </tr>
-        </thead>
-        <tbody id="timetable-body">
-        </tbody>
-    </table>
+    <div class="center-box">
+        <table>
+            <caption class="caption-text">
+                学校時間割
+            </caption>
+            <thead>
+                <tr>
+                    <th scope="col">時限</th>
+                    <th scope="col">月</th>
+                    <th scope="col">火</th>
+                    <th scope="col">水</th>
+                    <th scope="col">木</th>
+                    <th scope="col">金</th>
+                    <th scope="col">土</th>
+                    <th scope="col">日</th>
+                </tr>
+            </thead>
+            <tbody id="timetable-body">
+            </tbody>
+        </table>
+    </div>
+    <button id="save-btn">クリックして保存！</button>
     <script>
-        const schedule = document.getElementById("timetable-body");
+
         const day = ["mon", "tue", "wed", "thu", "fri", "stu", "sun"]
-        for (let y = 1; y <= 6; y++) { // 何限目？
-            let content = `<tr><th>${y}</th>`;
-            for (let x = 1; x <= 7; x++) { // 何曜日？
-                content += `<td class="${(x == 6 || x == 7) ? "td-weekend" : ""}"><input type="text" id="${day[x-1]}-${y}">${day[x-1]}-${y}</td>`;
+        const period = 6;
+        function showSchedule() {
+                const schedule = document.getElementById("timetable-body");
+            for (let y = 0; y < period; y++) { // 何限目？
+                let content = `<tr><th>${y+1}</th>`;
+                for (let x = 0; x < day.length; x++) { // 何曜日？
+                    content += `<td class="${(x == 5 || x == 6) ? "td-weekend" : ""}"><input type="text" id="${day[x]}-${y+1}">${day[x]}-${y+1}</td>`;
+                }
+                content += `</tr>`
+                schedule.innerHTML += content;
             }
-            content += `</tr>`
-            schedule.innerHTML += content;
         }
+        function loadSchedule() {
+            const data = JSON.parse(localStorage.getItem("timetable"));
+            if (!data) return;
+            for (let x = 0; x < day.length; x++) {
+                for (let y = 0; y < period; y++) {
+                    document.getElementById(`${day[x]}-${y+1}`).value = data[day[x]][y] ?? "";
+                }
+            }
+        }
+        
+        function getSchedule() {
+            const subjectValue = {};
+            for (let x = 0; x < day.length; x++) {
+                subjectValue[day[x]] = {};
+                for (let y = 0; y < period; y++) {
+                    const value = document.getElementById(`${day[x]}-${y+1}`).value;
+                    subjectValue[day[x]][y] = value;
+                }
+            }
+            return subjectValue;
+        }
+
+        showSchedule();
+        loadSchedule();
+        const saveButton = document.getElementById("save-btn");
+        saveButton.addEventListener("click", () => {
+            const value = getSchedule();
+            localStorage.setItem("timetable", JSON.stringify(value));// parse();
+            console.log(value);
+            alert("保存しました！");
+        });
     </script>
 </body>
 </html>
